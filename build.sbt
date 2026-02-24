@@ -1,4 +1,4 @@
-
+import sbtrelease.ReleaseStateTransformations.{checkSnapshotDependencies, inquireVersions, publishArtifacts, runClean, setReleaseVersion}
 
 val scala361 = "3.6.1"
 
@@ -25,7 +25,7 @@ releaseProcess := Seq[ReleaseStep](
 )
 releaseIgnoreUntrackedFiles := true
 publishTo := {
-    val ghRepo = "SneaksAndData/arcane-framework-scala"
+    val ghRepo = "SneaksAndData/arcane-framework-test"
     val ghUser = "_"
     val ghToken = sys.env.get("GITHUB_TOKEN")
     ghToken.map { token =>
@@ -33,3 +33,15 @@ publishTo := {
     }
 }
 publishMavenStyle := true
+
+lazy val root = (project in file("."))
+  .settings(
+      name := "arcane-framework-test",
+      idePackagePrefix := Some("com.sneaksanddata.arcane.framework.testkit"),
+
+      libraryDependencies += "com.sneaksanddata" % "arcane-framework_3" % "2.0.0-8-g68df84c",
+
+      // Compiler options
+      Test / logBuffered := false,
+
+  )
