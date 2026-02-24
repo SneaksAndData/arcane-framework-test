@@ -17,7 +17,7 @@ import com.sneaksanddata.arcane.framework.services.caching.schema_cache.MutableS
 import com.sneaksanddata.arcane.framework.services.filters.FieldsFilteringService
 import com.sneaksanddata.arcane.framework.services.iceberg.{IcebergS3CatalogWriter, IcebergTablePropertyManager}
 import com.sneaksanddata.arcane.framework.services.merging.JdbcMergeServiceClient
-import com.sneaksanddata.arcane.framework.services.metrics.{ArcaneDimensionsProvider, DataDog, DeclaredMetrics}
+import com.sneaksanddata.arcane.framework.services.metrics.{DataDog, DeclaredMetrics}
 import com.sneaksanddata.arcane.framework.services.streaming.base.{
   BackfillOverwriteBatchFactory,
   HookManager,
@@ -45,23 +45,20 @@ import com.sneaksanddata.arcane.framework.services.streaming.processors.transfor
   FieldFilteringTransformer,
   StagingProcessor
 }
-import com.sneaksanddata.arcane.framework.services.synapse.base.{SynapseLinkDataProvider, SynapseLinkReader}
-import com.sneaksanddata.arcane.framework.services.synapse.{
-  SynapseBackfillOverwriteBatchFactory,
-  SynapseHookManager,
-  SynapseLinkStreamingDataProvider
-}
 import zio.metrics.connectors.MetricsConfig
 import zio.metrics.connectors.datadog.DatadogPublisherConfig
 import zio.metrics.connectors.statsd.DatagramSocketConfig
-import zio.{ZIO, ZLayer}
+import zio.{Tag, ZIO, ZLayer}
 
+/** Builder for the test plugin application
+  * @tparam Environment
+  */
 trait TestAppBuilder[
     Environment <: StreamContext & GroupingSettings & VersionedDataGraphBuilderSettings & IcebergStagingSettings &
       JdbcMergeServiceClientSettings & SinkSettings & TablePropertiesSettings & FieldSelectionRuleSettings &
       BackfillSettings & StagingDataSettings & SynapseSourceSettings & SourceBufferingSettings & MetricsConfig &
       DatagramSocketConfig & DatadogPublisherConfig
-]:
+](implicit tag: Tag[Environment]):
 
   type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & InterruptionToken]
   type StreamContextLayer         = ZLayer[Any, Nothing, Environment]
