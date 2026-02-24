@@ -34,7 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          sbt clean build
+          sbt clean compile
 
       - name: Validate formatting
         env:
