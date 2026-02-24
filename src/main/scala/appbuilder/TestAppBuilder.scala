@@ -54,14 +54,17 @@ import com.sneaksanddata.arcane.framework.services.synapse.{
 import zio.metrics.connectors.MetricsConfig
 import zio.metrics.connectors.datadog.DatadogPublisherConfig
 import zio.metrics.connectors.statsd.DatagramSocketConfig
-import zio.{ZIO, ZLayer}
+import zio.{Tag, ZIO, ZLayer}
 
+/** Builder for the test plugin application
+  * @tparam Environment
+  */
 trait TestAppBuilder[
     Environment <: StreamContext & GroupingSettings & VersionedDataGraphBuilderSettings & IcebergStagingSettings &
       JdbcMergeServiceClientSettings & SinkSettings & TablePropertiesSettings & FieldSelectionRuleSettings &
       BackfillSettings & StagingDataSettings & SynapseSourceSettings & SourceBufferingSettings & MetricsConfig &
       DatagramSocketConfig & DatadogPublisherConfig
-]:
+](implicit tag: Tag[Environment]):
 
   type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & InterruptionToken]
   type StreamContextLayer         = ZLayer[Any, Nothing, Environment]
