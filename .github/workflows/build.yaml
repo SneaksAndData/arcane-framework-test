@@ -31,13 +31,13 @@ jobs:
 
       - name: Build and test
         env:
-          GITHUB_TOKEN: ${{ secrets.MAVEN_PUBLISH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           sbt clean build
 
       - name: Validate formatting
         env:
-          GITHUB_TOKEN: ${{ secrets.MAVEN_PUBLISH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: sbt scalafmtCheckAll
