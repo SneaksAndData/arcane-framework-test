@@ -2,6 +2,7 @@ package com.sneaksanddata.arcane.framework.testkit
 package verifications
 
 import com.sneaksanddata.arcane.framework.services.streaming.base.{JsonWatermark, TimestampOnlyWatermark}
+import upickle.ReadWriter
 import zio.{Task, ZIO}
 
 import java.sql.{DriverManager, ResultSet}
@@ -51,7 +52,9 @@ object FrameworkVerificationUtilities:
     * @param targetTableName
     * @return
     */
-  def getWatermark(targetTableName: String): ZIO[Any, Throwable, TimestampOnlyWatermark] = ZIO.scoped {
+  def getWatermark(
+      targetTableName: String
+  )(implicit rw: ReadWriter[JsonWatermark]): ZIO[Any, Throwable, JsonWatermark] = ZIO.scoped {
     for
       connection <- ZIO.attempt(DriverManager.getConnection(sys.env("ARCANE_FRAMEWORK__MERGE_SERVICE_CONNECTION_URI")))
       statement  <- ZIO.attempt(connection.createStatement())
@@ -63,7 +66,7 @@ object FrameworkVerificationUtilities:
         )
       )
       _         <- ZIO.attemptBlocking(resultSet.next())
-      watermark <- ZIO.attempt(TimestampOnlyWatermark.fromJson(resultSet.getString("value")))
+      watermark <- ZIO.attempt(JsonWatermark(resultSet.getString("value")))
     yield watermark
   }
 
