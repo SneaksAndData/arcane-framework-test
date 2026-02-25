@@ -1,11 +1,7 @@
 package com.sneaksanddata.arcane.framework.testkit
 package verifications
 
-import com.sneaksanddata.arcane.framework.services.streaming.base.{
-  JsonWatermark,
-  SourceWatermark,
-  TimestampOnlyWatermark
-}
+import com.sneaksanddata.arcane.framework.services.streaming.base.SourceWatermark
 import upickle.ReadWriter
 import zio.{Task, ZIO}
 
