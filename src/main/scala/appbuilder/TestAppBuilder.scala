@@ -56,8 +56,8 @@ import zio.{Tag, ZIO, ZLayer}
 trait TestAppBuilder[
     Environment <: StreamContext & GroupingSettings & VersionedDataGraphBuilderSettings & IcebergStagingSettings &
       JdbcMergeServiceClientSettings & SinkSettings & TablePropertiesSettings & FieldSelectionRuleSettings &
-      BackfillSettings & StagingDataSettings & SynapseSourceSettings & SourceBufferingSettings & MetricsConfig &
-      DatagramSocketConfig & DatadogPublisherConfig
+      BackfillSettings & StagingDataSettings & SourceBufferingSettings & MetricsConfig & DatagramSocketConfig &
+      DatadogPublisherConfig
 ](implicit tag: Tag[Environment]):
 
   type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & InterruptionToken]
