@@ -1,113 +1,67 @@
 package com.sneaksanddata.arcane.framework.testkit
 package appbuilder
 
-import metrics.VoidDimensionsProvider
-
-import com.sneaksanddata.arcane.framework.models.app.StreamContext
-import com.sneaksanddata.arcane.framework.models.schemas.ArcaneSchema
-import com.sneaksanddata.arcane.framework.models.settings.*
 import com.sneaksanddata.arcane.framework.services.app.base.{
   InterruptionToken,
   StreamLifetimeService,
   StreamRunnerService
 }
-import com.sneaksanddata.arcane.framework.services.app.{GenericStreamRunnerService, PosixStreamLifetimeService}
-import com.sneaksanddata.arcane.framework.services.base.SchemaProvider
-import com.sneaksanddata.arcane.framework.services.caching.schema_cache.MutableSchemaCache
-import com.sneaksanddata.arcane.framework.services.filters.FieldsFilteringService
-import com.sneaksanddata.arcane.framework.services.iceberg.{IcebergS3CatalogWriter, IcebergTablePropertyManager}
-import com.sneaksanddata.arcane.framework.services.merging.JdbcMergeServiceClient
-import com.sneaksanddata.arcane.framework.services.metrics.{DataDog, DeclaredMetrics}
-import com.sneaksanddata.arcane.framework.services.streaming.base.{
-  BackfillOverwriteBatchFactory,
-  HookManager,
-  StreamDataProvider
-}
-import com.sneaksanddata.arcane.framework.services.streaming.data_providers.backfill.{
-  GenericBackfillStreamingMergeDataProvider,
-  GenericBackfillStreamingOverwriteDataProvider
-}
-import com.sneaksanddata.arcane.framework.services.streaming.graph_builders.{
-  GenericGraphBuilderFactory,
-  GenericStreamingGraphBuilder
-}
-import com.sneaksanddata.arcane.framework.services.streaming.processors.GenericGroupingTransformer
-import com.sneaksanddata.arcane.framework.services.streaming.processors.batch_processors.backfill.{
-  BackfillApplyBatchProcessor,
-  BackfillOverwriteWatermarkProcessor
-}
-import com.sneaksanddata.arcane.framework.services.streaming.processors.batch_processors.streaming.{
-  DisposeBatchProcessor,
-  MergeBatchProcessor,
-  WatermarkProcessor
-}
-import com.sneaksanddata.arcane.framework.services.streaming.processors.transformers.{
-  FieldFilteringTransformer,
-  StagingProcessor
-}
-import zio.metrics.connectors.MetricsConfig
-import zio.metrics.connectors.datadog.DatadogPublisherConfig
-import zio.metrics.connectors.statsd.DatagramSocketConfig
-import zio.{Tag, ZIO, ZLayer}
+import zio.{ZIO, ZLayer}
 
-/** Builder for the test plugin application
-  * @tparam Environment
+import scala.quoted.*
+
+type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & InterruptionToken]
+
+/** Builds the test application from the provided layers.
+  *
+  * This is a macro method and thus requires all DI to be resolved at compile time. Automatic app layer construction is
+  * not yet available.
+  *
+  * Make sure to always provide the following for `frameworkLayers`:
+  *
+  * GenericGraphBuilderFactory.composedLayer, GenericGroupingTransformer.layer, DisposeBatchProcessor.layer,
+  * FieldFilteringTransformer.layer, MergeBatchProcessor.layer, StagingProcessor.layer, FieldsFilteringService.layer,
+  * PosixStreamLifetimeService.layer, IcebergS3CatalogWriter.layer, JdbcMergeServiceClient.layer,
+  * BackfillApplyBatchProcessor.layer, GenericBackfillStreamingOverwriteDataProvider.layer,
+  * GenericBackfillStreamingMergeDataProvider.layer, GenericStreamingGraphBuilder.backfillSubStreamLayer,
+  * ZLayer.succeed(MutableSchemaCache()), DeclaredMetrics.layer, VoidDimensionsProvider.layer,
+  * DataDog.UdsPublisher.layer, WatermarkProcessor.layer, BackfillOverwriteWatermarkProcessor.layer,
+  * IcebergTablePropertyManager.layer
+  *
+  * @return
+  *   The test application.
   */
-trait TestAppBuilder[
-    Environment <: StreamContext & GroupingSettings & VersionedDataGraphBuilderSettings & IcebergStagingSettings &
-      JdbcMergeServiceClientSettings & SinkSettings & TablePropertiesSettings & FieldSelectionRuleSettings &
-      BackfillSettings & StagingDataSettings & SourceBufferingSettings & MetricsConfig & DatagramSocketConfig &
-      DatadogPublisherConfig
-](implicit tag: Tag[Environment]):
 
-  type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & InterruptionToken]
-  type StreamContextLayer         = ZLayer[Any, Nothing, Environment]
+object TestAppBuilder:
 
-  val appLayer: ZIO[StreamRunnerService, Throwable, Unit]
-
-  /** Builds the test application from the provided layers.
-    *
-    * @param lifetimeService
-    *   The lifetime service layer.
-    * @param streamContextLayer
-    *   The stream context layer.
-    * @return
-    *   The test application.
-    */
-  def buildTestApp(
+  inline def buildTestApp(
+      app: ZIO[StreamRunnerService, Throwable, Unit],
       lifetimeService: StreamLifeTimeServiceLayer,
-      streamContextLayer: StreamContextLayer,
-      streamDataProvider: ZLayer[Any, Throwable, StreamDataProvider],
-      hookManager: ZLayer[Any, Throwable, HookManager],
-      backfillOverwrite: ZLayer[Any, Throwable, BackfillOverwriteBatchFactory],
-      schemaProvider: ZLayer[Any, Throwable, SchemaProvider[ArcaneSchema]]
-  ): ZIO[Any, Throwable, Unit] =
-    appLayer.provide(
-      GenericStreamRunnerService.layer,
-      GenericGraphBuilderFactory.composedLayer,
-      GenericGroupingTransformer.layer,
-      DisposeBatchProcessor.layer,
-      FieldFilteringTransformer.layer,
-      MergeBatchProcessor.layer,
-      StagingProcessor.layer,
-      FieldsFilteringService.layer,
-      PosixStreamLifetimeService.layer,
-      streamContextLayer,
-      streamDataProvider,
-      hookManager,
-      backfillOverwrite,
-      schemaProvider,
-      IcebergS3CatalogWriter.layer,
-      JdbcMergeServiceClient.layer,
-      BackfillApplyBatchProcessor.layer,
-      GenericBackfillStreamingOverwriteDataProvider.layer,
-      GenericBackfillStreamingMergeDataProvider.layer,
-      GenericStreamingGraphBuilder.backfillSubStreamLayer,
-      ZLayer.succeed(MutableSchemaCache()),
-      DeclaredMetrics.layer,
-      VoidDimensionsProvider.layer,
-      DataDog.UdsPublisher.layer,
-      WatermarkProcessor.layer,
-      BackfillOverwriteWatermarkProcessor.layer,
-      IcebergTablePropertyManager.layer
-    )
+      pluginLayers: ZLayer[?, Nothing, ?]*
+  )(frameworkLayers: ZLayer[?, Throwable, ?]*): ZIO[Any, Throwable, Unit] = ${
+    buildTestAppImpl('pluginLayers, 'frameworkLayers, 'app)
+  }
+
+  private def remapZLayers(layers: Expr[Seq[ZLayer[?, Throwable, ?]]])(using
+      Quotes
+  ): Seq[Expr[ZLayer[?, Throwable, ?]]] =
+    import quotes.reflect.*
+
+    layers.asTerm.underlyingArgument match
+      case Typed(Repeated(elements, _), tpt) => elements.map(_.asExprOf[ZLayer[?, Throwable, ?]])
+      case _ =>
+        report.errorAndAbort(
+          s"Invalid argument literal ${layers.asTerm.underlyingArgument} provided, expected Typed(Repeated)"
+        )
+
+  private def buildTestAppImpl(
+      services: Expr[Seq[ZLayer[?, Throwable, ?]]],
+      services2: Expr[Seq[ZLayer[?, Throwable, ?]]],
+      app: Expr[ZIO[StreamRunnerService, Throwable, Unit]]
+  )(using Quotes): Expr[ZIO[Any, Throwable, Unit]] =
+
+    val remappedFramework = remapZLayers(services2)
+
+    val remapped = remapZLayers(services)
+
+    '{ ${ app }.provide(${ Varargs(remapped ++ remappedFramework) }*) }
