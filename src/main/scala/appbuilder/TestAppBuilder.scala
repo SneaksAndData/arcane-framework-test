@@ -55,13 +55,13 @@ object TestAppBuilder:
         )
 
   private def buildTestAppImpl(
-      services: Expr[Seq[ZLayer[?, Throwable, ?]]],
-      services2: Expr[Seq[ZLayer[?, Throwable, ?]]],
+      plugin: Expr[Seq[ZLayer[?, Throwable, ?]]],
+      framework: Expr[Seq[ZLayer[?, Throwable, ?]]],
       app: Expr[ZIO[StreamRunnerService, Throwable, Unit]]
   )(using Quotes): Expr[ZIO[Any, Throwable, Unit]] =
 
-    val remappedFramework = remapZLayers(services2)
+    val remappedFramework = remapZLayers(framework)
 
-    val remapped = remapZLayers(services)
+    val remapped = remapZLayers(plugin)
 
     '{ ${ app }.provide(${ Varargs(remapped ++ remappedFramework) }*) }
