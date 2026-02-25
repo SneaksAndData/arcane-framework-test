@@ -1,7 +1,7 @@
 package com.sneaksanddata.arcane.framework.testkit
 package verifications
 
-import com.sneaksanddata.arcane.framework.services.streaming.base.{JsonWatermark, TimestampOnlyWatermark}
+import com.sneaksanddata.arcane.framework.services.streaming.base.SourceWatermark
 import upickle.ReadWriter
 import zio.{Task, ZIO}
 
@@ -54,21 +54,24 @@ object FrameworkVerificationUtilities:
     */
   def getWatermark(
       targetTableName: String
-  )(implicit rw: ReadWriter[JsonWatermark]): ZIO[Any, Throwable, JsonWatermark] = ZIO.scoped {
-    for
-      connection <- ZIO.attempt(DriverManager.getConnection(sys.env("ARCANE_FRAMEWORK__MERGE_SERVICE_CONNECTION_URI")))
-      statement  <- ZIO.attempt(connection.createStatement())
-      resultSet <- ZIO.fromAutoCloseable(
-        ZIO.attemptBlocking(
-          statement.executeQuery(
-            s"SELECT value FROM iceberg.test.\"$targetTableName$$properties\" WHERE key = 'comment'"
+  )[Watermark <: SourceWatermark[String]](implicit rw: ReadWriter[Watermark]): ZIO[Any, Throwable, Watermark] =
+    ZIO.scoped {
+      for
+        connection <- ZIO.attempt(
+          DriverManager.getConnection(sys.env("ARCANE_FRAMEWORK__MERGE_SERVICE_CONNECTION_URI"))
+        )
+        statement <- ZIO.attempt(connection.createStatement())
+        resultSet <- ZIO.fromAutoCloseable(
+          ZIO.attemptBlocking(
+            statement.executeQuery(
+              s"SELECT value FROM iceberg.test.\"$targetTableName$$properties\" WHERE key = 'comment'"
+            )
           )
         )
-      )
-      _         <- ZIO.attemptBlocking(resultSet.next())
-      watermark <- ZIO.attempt(JsonWatermark(resultSet.getString("value")))
-    yield watermark
-  }
+        _         <- ZIO.attemptBlocking(resultSet.next())
+        watermark <- ZIO.attempt(upickle.read(resultSet.getString("value")))
+      yield watermark
+    }
 
   /** Clears target table
     * @param targetFullName
