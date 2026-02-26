@@ -17,7 +17,8 @@ type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & I
   * This is a macro method and thus requires all DI to be resolved at compile time. Automatic app layer construction is
   * not yet available.
   *
-  * Make sure to always provide the following for `frameworkLayers`:
+  * `frameworkLayers` are services required by the framework stream graph builder. They might include, but are not
+  * limited to::
   *
   * GenericGraphBuilderFactory.composedLayer, GenericGroupingTransformer.layer, DisposeBatchProcessor.layer,
   * FieldFilteringTransformer.layer, MergeBatchProcessor.layer, StagingProcessor.layer, FieldsFilteringService.layer,
@@ -27,6 +28,9 @@ type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & I
   * ZLayer.succeed(MutableSchemaCache()), DeclaredMetrics.layer, VoidDimensionsProvider.layer,
   * DataDog.UdsPublisher.layer, WatermarkProcessor.layer, BackfillOverwriteWatermarkProcessor.layer,
   * IcebergTablePropertyManager.layer
+  *
+  * `pluginLayers` are plugin-specific services, that are only relevant for the plugin. Usually includes plugin
+  * implementations of StreamingDataProvider and related functionality
   *
   * @return
   *   The test application.
