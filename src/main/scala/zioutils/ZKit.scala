@@ -8,6 +8,6 @@ object ZKit:
   extension (runner: Fiber.Runtime[Throwable, Unit])
     def runOrFail(timeout: Duration): zio.ZIO[Any, Cause[Throwable], Unit] =
       for
-        result <- runner.join.timeout(Duration.fromSeconds(10)).exit
+        result <- runner.join.timeout(timeout).exit
         _      <- ZIO.when(result.causeOption.isDefined)(ZIO.fail(result.causeOption.get))
       yield ()
