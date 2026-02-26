@@ -1,16 +1,10 @@
 package com.sneaksanddata.arcane.framework.testkit
 package appbuilder
 
-import com.sneaksanddata.arcane.framework.services.app.base.{
-  InterruptionToken,
-  StreamLifetimeService,
-  StreamRunnerService
-}
+import com.sneaksanddata.arcane.framework.services.app.base.StreamRunnerService
 import zio.{ZIO, ZLayer}
 
 import scala.quoted.*
-
-type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & InterruptionToken]
 
 /** Builds the test application from the provided layers.
   *
@@ -27,7 +21,7 @@ type StreamLifeTimeServiceLayer = ZLayer[Any, Nothing, StreamLifetimeService & I
   * GenericBackfillStreamingMergeDataProvider.layer, GenericStreamingGraphBuilder.backfillSubStreamLayer,
   * ZLayer.succeed(MutableSchemaCache()), DeclaredMetrics.layer, VoidDimensionsProvider.layer,
   * DataDog.UdsPublisher.layer, WatermarkProcessor.layer, BackfillOverwriteWatermarkProcessor.layer,
-  * IcebergTablePropertyManager.layer
+  * IcebergTablePropertyManager.layer, TimeLimitLifetimeService.layer
   *
   * `pluginLayers` are plugin-specific services, that are only relevant for the plugin. Usually includes plugin
   * implementations of StreamingDataProvider and related functionality
@@ -40,7 +34,6 @@ object TestAppBuilder:
 
   inline def buildTestApp(
       app: ZIO[StreamRunnerService, Throwable, Unit],
-      lifetimeService: StreamLifeTimeServiceLayer,
       pluginLayers: ZLayer[?, Nothing, ?]*
   )(frameworkLayers: ZLayer[?, Throwable, ?]*): ZIO[Any, Throwable, Unit] = ${
     buildTestAppImpl('pluginLayers, 'frameworkLayers, 'app)
