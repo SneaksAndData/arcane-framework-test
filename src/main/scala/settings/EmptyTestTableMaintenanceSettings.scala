@@ -1,7 +1,7 @@
 package com.sneaksanddata.arcane.framework.testkit
 package settings
 
-import com.sneaksanddata.arcane.framework.models.settings.{
+import com.sneaksanddata.arcane.framework.models.settings.sink.{
   AnalyzeSettings,
   OptimizeSettings,
   OrphanFilesExpirationSettings,
