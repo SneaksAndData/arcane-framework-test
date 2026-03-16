@@ -1,7 +1,6 @@
 package com.sneaksanddata.arcane.framework.testkit
 package iceberg
 
-import com.sneaksanddata.arcane.framework.models.settings.{IcebergSinkSettings, IcebergStagingSettings}
 import com.sneaksanddata.arcane.framework.services.iceberg.IcebergCatalogCredential
 import com.sneaksanddata.arcane.framework.services.iceberg.base.S3CatalogFileIO
 
