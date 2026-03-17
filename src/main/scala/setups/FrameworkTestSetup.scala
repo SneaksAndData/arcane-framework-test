@@ -14,8 +14,10 @@ object FrameworkTestSetup:
   def prepareWatermark(tableName: String, schema: ArcaneSchema, watermark: JsonWatermark): Task[Unit] = ZIO
     .scoped {
       for
-        _ <- ZIO.service[SinkEntityManager].map(_.createTable(CreateTableRequest(tableName, schema, true)))
-        _ <- ZIO.service[SinkPropertyManager].map(_.comment(tableName, watermark.toJson))
+        sink     <- ZIO.service[SinkEntityManager]
+        property <- ZIO.service[SinkPropertyManager]
+        _        <- sink.createTable(CreateTableRequest(tableName, schema, true))
+        _        <- property.comment(tableName, watermark.toJson)
       yield ()
     }
     .provide(TestPropertyManager.sinkPropertyManagerLayer, TestEntityManager.sinkEntityManagerLayer)
