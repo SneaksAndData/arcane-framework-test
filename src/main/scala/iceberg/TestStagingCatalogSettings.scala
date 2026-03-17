@@ -14,4 +14,4 @@ object TestStagingCatalogSettings extends IcebergCatalogSettings:
   override val additionalProperties: Map[String, String] =
     S3CatalogFileIO.properties ++ IcebergCatalogCredential.oAuth2Properties
 
-  override val maxCatalogInstanceLifetime: zio.Duration = zio.Duration.fromSeconds(5)
+  override val maxCatalogInstanceLifetime: zio.Duration = zio.Duration.fromSeconds(3600)
