@@ -11,3 +11,4 @@ object TestSinkCatalogSettings extends IcebergCatalogSettings:
   override val warehouse: String                         = defaultWarehouse
   override val catalogUri: String                        = defaultCatalogUri
   override val additionalProperties: Map[String, String] = IcebergCatalogCredential.oAuth2Properties
+  override val maxCatalogInstanceLifetime: zio.Duration  = zio.Duration.fromSeconds(3600)
