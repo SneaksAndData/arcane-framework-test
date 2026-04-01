@@ -1,9 +1,6 @@
 package com.sneaksanddata.arcane.framework.testkit
 package iceberg
 
-import com.sneaksanddata.arcane.framework.services.iceberg.IcebergCatalogCredential
-import com.sneaksanddata.arcane.framework.services.iceberg.base.S3CatalogFileIO
-
 /** Test catalog connection information
   */
 object TestCatalogInfo:
