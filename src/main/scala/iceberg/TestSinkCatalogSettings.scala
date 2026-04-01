@@ -12,6 +12,6 @@ object TestSinkCatalogSettings extends IcebergCatalogSettings:
   override val warehouse: String  = defaultWarehouse
   override val catalogUri: String = defaultCatalogUri
   override val additionalProperties: Map[String, String] = sys.env.get("ARCANE_FRAMEWORK__CATALOG_NO_AUTH") match
-    case Some(_) => IcebergCatalogCredential.oAuth2Properties
-    case None    => S3CatalogFileIO.properties
+    case Some(_) => S3CatalogFileIO.properties
+    case None    => S3CatalogFileIO.properties ++ IcebergCatalogCredential.oAuth2Properties
   override val maxCatalogInstanceLifetime: zio.Duration = zio.Duration.fromSeconds(3600)
