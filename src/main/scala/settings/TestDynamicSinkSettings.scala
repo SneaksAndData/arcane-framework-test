@@ -7,6 +7,9 @@ import com.sneaksanddata.arcane.framework.models.settings.database.JdbcConnectio
 import com.sneaksanddata.arcane.framework.models.settings.iceberg.IcebergCatalogSettings
 import com.sneaksanddata.arcane.framework.models.settings.sink.{SinkSettings, TableMaintenanceSettings}
 import com.sneaksanddata.arcane.framework.models.settings.staging.{
+  BasicCredential,
+  BasicCredentialImpl,
+  JdbcCredentialType,
   JdbcMergeServiceClientSettings,
   JdbcQueryRetryMode,
   Never,
@@ -20,7 +23,13 @@ class TestDynamicSinkSettings(name: String) extends SinkSettings:
   override val icebergCatalog: IcebergCatalogSettings         = TestSinkCatalogSettings
   override val targetTableProperties: TablePropertiesSettings = EmptyTablePropertiesSettings
   override val mergeServiceClient: JdbcMergeServiceClientSettings = new JdbcMergeServiceClientSettings {
-    override val connectionUrl: JdbcConnectionUrl               = "jdbc:trino://localhost:8080/iceberg/test?user=test"
+    override val connectionUrl: JdbcConnectionUrl = "jdbc:trino://localhost:8080"
+    override val credentialType: JdbcCredentialType = BasicCredentialImpl(
+      BasicCredential(
+        userSetting = Some("test"),
+        passwordSetting = None
+      )
+    )
     override val extraConnectionParameters: Map[String, String] = Map.empty
     override val queryRetryMode: JdbcQueryRetryMode             = NeverImpl(Never())
     override val queryRetryBaseDuration: zio.Duration           = zio.Duration.fromSeconds(1)

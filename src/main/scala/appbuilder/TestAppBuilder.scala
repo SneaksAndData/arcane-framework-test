@@ -14,12 +14,11 @@ import scala.quoted.*
   * `frameworkLayers` are services required by the framework stream graph builder. They might include, but are not
   * limited to::
   *
-  * GenericGraphBuilderFactory.composedLayer, GenericGroupingTransformer.layer, DisposeBatchProcessor.layer,
-  * FieldFilteringTransformer.layer, MergeBatchProcessor.layer, StagingProcessor.layer, FieldsFilteringService.layer,
-  * PosixStreamLifetimeService.layer, IcebergS3CatalogWriter.layer, JdbcMergeServiceClient.layer,
-  * BackfillApplyBatchProcessor.layer, GenericBackfillStreamingOverwriteDataProvider.layer,
-  * GenericBackfillStreamingMergeDataProvider.layer, GenericStreamingGraphBuilder.backfillSubStreamLayer,
-  * ZLayer.succeed(MutableSchemaCache()), DeclaredMetrics.layer, VoidDimensionsProvider.layer,
+  * GenericGraphBuilderFactory.composedLayer, DisposeBatchProcessor.layer, FieldFilteringTransformer.layer,
+  * MergeBatchProcessor.layer, StagingProcessor.layer, FieldsFilteringService.layer, PosixStreamLifetimeService.layer,
+  * IcebergS3CatalogWriter.layer, JdbcMergeServiceClient.layer, BackfillApplyBatchProcessor.layer,
+  * GenericBackfillStreamingOverwriteDataProvider.layer, GenericBackfillStreamingMergeDataProvider.layer,
+  * GenericStreamingGraphBuilder.backfillSubStreamLayer, DeclaredMetrics.layer, GlobalMetricTagProvider.layer,
   * DataDog.UdsPublisher.layer, WatermarkProcessor.layer, BackfillOverwriteWatermarkProcessor.layer,
   * IcebergTablePropertyManager.layer, TimeLimitLifetimeService.layer
   *
