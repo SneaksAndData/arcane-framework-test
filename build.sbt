@@ -39,7 +39,7 @@ lazy val root = (project in file("."))
       name := "arcane-framework-test",
       idePackagePrefix := Some("com.sneaksanddata.arcane.framework.testkit"),
 
-      libraryDependencies += "com.sneaksanddata" % "arcane-framework_3" % "2.2.0-7-gc684807",
+      libraryDependencies += "com.sneaksanddata" % "arcane-framework_3" % "2.2.1",
       libraryDependencies += "dev.zio" %% "zio-test-sbt"      % "2.1.24",
       libraryDependencies += "dev.zio" %% "zio-test"          % "2.1.24",
 
