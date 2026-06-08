@@ -12,7 +12,6 @@ import com.sneaksanddata.arcane.framework.services.iceberg.base.S3CatalogFileIO
   */
 object TestStagingSettings extends StagingSettings:
   override val table: StagingTableSettings = new StagingTableSettings {
-    override val stagingTablePrefix: String  = "staging_test_table"
     override val stagingCatalogName: String  = "demo"
     override val stagingSchemaName: String   = "test"
     override val isUnifiedSchema: Boolean    = false
