@@ -39,12 +39,12 @@ lazy val root = (project in file("."))
       name := "arcane-framework-test",
       idePackagePrefix := Some("com.sneaksanddata.arcane.framework.testkit"),
 
-      libraryDependencies += "com.sneaksanddata" % "arcane-framework_3" % "2.2.1",
-      libraryDependencies += "dev.zio" %% "zio-test-sbt"      % "2.1.24",
-      libraryDependencies += "dev.zio" %% "zio-test"          % "2.1.24",
+      libraryDependencies += "com.sneaksanddata" % "arcane-framework_3" % "2.2.1-22-g4df37c6",
+      libraryDependencies += "dev.zio" %% "zio-test-sbt"      % "2.1.26",
+      libraryDependencies += "dev.zio" %% "zio-test"          % "2.1.26",
 
-      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test,
-      libraryDependencies += "org.scalatest" %% "scalatest-flatspec" % "3.2.19" % Test,
+      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.20" % Test,
+      libraryDependencies += "org.scalatest" %% "scalatest-flatspec" % "3.2.20" % Test,
 
       // Compiler options
       Test / logBuffered := false,
