@@ -1,6 +1,7 @@
 package com.sneaksanddata.arcane.framework.testkit
 package verifications
 
+import com.sneaksanddata.arcane.framework.models.MetadataKeys
 import com.sneaksanddata.arcane.framework.services.streaming.base.SourceWatermark
 import upickle.ReadWriter
 import zio.{Task, ZIO}
@@ -64,7 +65,7 @@ object FrameworkVerificationUtilities:
         resultSet <- ZIO.fromAutoCloseable(
           ZIO.attemptBlocking(
             statement.executeQuery(
-              s"SELECT value FROM iceberg.test.\"$targetTableName$$properties\" WHERE key = 'comment'"
+              s"SELECT value FROM iceberg.test.\"$targetTableName$$properties\" WHERE key = '${MetadataKeys.watermarkKey}'"
             )
           )
         )
