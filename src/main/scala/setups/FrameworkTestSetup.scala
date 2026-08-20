@@ -3,6 +3,7 @@ package setups
 
 import iceberg.{TestEntityManager, TestPropertyManager}
 
+import com.sneaksanddata.arcane.framework.models.MetadataKeys
 import com.sneaksanddata.arcane.framework.models.ddl.CreateTableRequest
 import com.sneaksanddata.arcane.framework.models.schemas.ArcaneSchema
 import com.sneaksanddata.arcane.framework.services.iceberg.base.{SinkEntityManager, SinkPropertyManager}
@@ -17,7 +18,7 @@ object FrameworkTestSetup:
         sink     <- ZIO.service[SinkEntityManager]
         property <- ZIO.service[SinkPropertyManager]
         _        <- sink.createTable(CreateTableRequest(tableName, schema, true))
-        _        <- property.comment(tableName, watermark.toJson)
+        _        <- property.setProperty(tableName, MetadataKeys.watermarkKey, watermark.toJson)
       yield ()
     }
     .provide(TestPropertyManager.sinkPropertyManagerLayer, TestEntityManager.sinkEntityManagerLayer)
