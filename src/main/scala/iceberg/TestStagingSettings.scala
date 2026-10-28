@@ -5,8 +5,6 @@ import iceberg.TestCatalogInfo.*
 
 import com.sneaksanddata.arcane.framework.models.settings.iceberg.IcebergCatalogSettings
 import com.sneaksanddata.arcane.framework.models.settings.staging.{StagingSettings, StagingTableSettings}
-import com.sneaksanddata.arcane.framework.services.iceberg.IcebergCatalogCredential
-import com.sneaksanddata.arcane.framework.services.iceberg.base.S3CatalogFileIO
 
 /** Test settings for staging catalog connections
   */
