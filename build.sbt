@@ -10,7 +10,11 @@ resolvers += "Arcane framework repo" at "https://maven.pkg.github.com/SneaksAndD
 val githubToken: Option[String] =
   sys.env.get("GITHUB_TOKEN").orElse {
     val tokenFile = file(".ghtoken")
-    if (tokenFile.exists()) Some(scala.io.Source.fromFile(tokenFile).mkString.trim) else None
+    if (tokenFile.exists()) {
+      val source = scala.io.Source.fromFile(tokenFile)
+      try Some(source.mkString.trim)
+      finally source.close()
+    } else None
   }
 
 credentials ++= githubToken.map { token =>
