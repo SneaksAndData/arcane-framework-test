@@ -1,18 +1,26 @@
 import sbtrelease.ReleaseStateTransformations.{checkSnapshotDependencies, inquireVersions, publishArtifacts, runClean, setReleaseVersion}
 
-val scala383 = "3.8.3"
+val scala3 = "3.9.0"
 
 ThisBuild / organization := "com.sneaksanddata"
-ThisBuild / scalaVersion := scala383
+ThisBuild / scalaVersion := scala3
 
 resolvers += "Arcane framework repo" at "https://maven.pkg.github.com/SneaksAndData/arcane-framework-scala"
 
-credentials += Credentials(
+val githubToken: Option[String] =
+  sys.env.get("GITHUB_TOKEN").orElse {
+    val tokenFile = file(".ghtoken")
+    if (tokenFile.exists()) Some(scala.io.Source.fromFile(tokenFile).mkString.trim) else None
+  }
+
+credentials ++= githubToken.map { token =>
+  Credentials(
     "GitHub Package Registry",
     "maven.pkg.github.com",
     "_",
-    sys.env("GITHUB_TOKEN")
-)
+    token
+  )
+}.toSeq
 
 releaseVersionFile := file("version.sbt")
 releaseVersionBump := sbtrelease.Version.Bump.Bugfix
@@ -27,8 +35,7 @@ releaseIgnoreUntrackedFiles := true
 publishTo := {
     val ghRepo = "SneaksAndData/arcane-framework-test"
     val ghUser = "_"
-    val ghToken = sys.env.get("GITHUB_TOKEN")
-    ghToken.map { token =>
+    githubToken.map { token =>
         "GitHub Package Registry" at s"https://maven.pkg.github.com/$ghRepo"
     }
 }
@@ -40,8 +47,8 @@ lazy val root = (project in file("."))
       idePackagePrefix := Some("com.sneaksanddata.arcane.framework.testkit"),
 
       libraryDependencies += "com.sneaksanddata" % "arcane-framework_3" % "2.3.2",
-      libraryDependencies += "dev.zio" %% "zio-test-sbt"      % "2.1.26",
-      libraryDependencies += "dev.zio" %% "zio-test"          % "2.1.26",
+      libraryDependencies += "dev.zio" %% "zio-test-sbt"      % "2.1.27",
+      libraryDependencies += "dev.zio" %% "zio-test"          % "2.1.27",
 
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.20" % Test,
       libraryDependencies += "org.scalatest" %% "scalatest-flatspec" % "3.2.20" % Test,
