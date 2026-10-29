@@ -18,7 +18,11 @@ object FrameworkTestSetup:
         sink     <- ZIO.service[SinkEntityManager]
         property <- ZIO.service[SinkPropertyManager]
         _        <- sink.createTable(CreateTableRequest(tableName, schema, true))
-        _        <- property.setProperty(tableName, MetadataKeys.watermarkKey, watermark.toJson)
+        _ <- property.setProperty(
+          tableName,
+          MetadataKeys.getFrameworkKey(MetadataKeys.watermarkKey),
+          watermark.toJson
+        )
       yield ()
     }
     .provide(TestPropertyManager.sinkPropertyManagerLayer, TestEntityManager.sinkEntityManagerLayer)

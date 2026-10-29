@@ -65,7 +65,7 @@ object FrameworkVerificationUtilities:
         resultSet <- ZIO.fromAutoCloseable(
           ZIO.attemptBlocking(
             statement.executeQuery(
-              s"SELECT value FROM iceberg.test.\"$targetTableName$$properties\" WHERE key = '${MetadataKeys.watermarkKey}'"
+              s"SELECT value FROM iceberg.test.\"$targetTableName$$properties\" WHERE key = '${MetadataKeys.getFrameworkKey(MetadataKeys.watermarkKey)}'"
             )
           )
         )
