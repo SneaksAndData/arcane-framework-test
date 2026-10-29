@@ -15,12 +15,12 @@ import scala.quoted.*
   * limited to::
   *
   * GenericGraphBuilderFactory.composedLayer, DisposeBatchProcessor.layer, FieldFilteringTransformer.layer,
-  * MergeBatchProcessor.layer, StagingProcessor.layer, FieldsFilteringService.layer, PosixStreamLifetimeService.layer,
-  * IcebergS3CatalogWriter.layer, JdbcMergeServiceClient.layer, BackfillApplyBatchProcessor.layer,
+  * MergeBatchProcessor.layer, StagingProcessor.layer, FieldsFilteringService.layer, IcebergS3CatalogWriter.layer,
+  * JdbcMergeServiceClient.layer, BackfillApplyBatchProcessor.layer,
   * GenericBackfillStreamingOverwriteDataProvider.layer, GenericBackfillStreamingMergeDataProvider.layer,
   * GenericStreamingGraphBuilder.backfillSubStreamLayer, DeclaredMetrics.layer, GlobalMetricTagProvider.layer,
   * DataDog.UdsPublisher.layer, WatermarkProcessor.layer, BackfillOverwriteWatermarkProcessor.layer,
-  * IcebergTablePropertyManager.layer, TimeLimitLifetimeService.layer
+  * IcebergTablePropertyManager.layer
   *
   * `pluginLayers` are plugin-specific services, that are only relevant for the plugin. Usually includes plugin
   * implementations of StreamingDataProvider and related functionality

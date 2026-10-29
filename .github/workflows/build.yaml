@@ -21,7 +21,7 @@ jobs:
 
       checks: write       # required for cobertura-action
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Setup Scala
@@ -34,7 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          sbt clean compile
+          sbt "clean; compile;"
 
       - name: Validate formatting
         env:
